@@ -1,1 +1,1 @@
-# rejoicecustoms.github.io
+# Rejoice Customs
