@@ -237,6 +237,7 @@
                     <span class="badge">Premium Collection</span>
                     <p class="card-desc">Unique natural rock stone slates customized with high-definition photo printing. Includes display stands.</p>
                 </div>
+                <button class="view-btn" onclick="openGallery('Custom Rock Stone Photo Frame', '$45', ['images/rock_frame_1.jpg', 'images/rock_frame_2.jpg', 'images/rock_frame_3.jpg'], 'Unique natural rock stone slates customized with high-definition photo printing. Includes display stands.')">🖼️ View Gallery (3 Photos)</button>
             </div>
 
             <div class="card">
@@ -248,6 +249,7 @@
                     <span class="badge">Best Seller</span>
                     <p class="card-desc">Classic framing option featuring high-quality photo print included. Ready to display or gift.</p>
                 </div>
+                <button class="view-btn" onclick="openGallery('Custom Photo Frame (with Photo)', '$15', ['images/photo_frame_1.jpg', 'images/photo_frame_2.jpg'], 'Classic framing option featuring high-quality photo print included. Ready to display or gift.')">🖼️ View Gallery (2 Photos)</button>
             </div>
 
             <div class="card">
@@ -259,6 +261,7 @@
                     <span class="badge">Everyday Favorite</span>
                     <p class="card-desc">Durable 11oz ceramic mug personalized with custom photos, quotes, or graphics. Microwave & dishwasher safe.</p>
                 </div>
+                <button class="view-btn" onclick="openGallery('Custom Ceramic Mugs', '$20', ['images/mug_front.jpg', 'images/mug_back.jpg'], 'Durable 11oz ceramic mug personalized with custom photos, quotes, or graphics. Microwave & dishwasher safe.')">🖼️ View Gallery (2 Photos)</button>
             </div>
 
             <div class="card">
@@ -270,6 +273,7 @@
                     <span class="badge">Set of 4</span>
                     <p class="card-desc">Set of 4 customized magnets featuring your chosen memories, artwork, or text.</p>
                 </div>
+                <button class="view-btn" onclick="openGallery('Custom Fridge Magnets', '$15', ['images/magnets_set.jpg', 'images/magnet_detail.jpg'], 'Set of 4 customized magnets featuring your chosen memories, artwork, or text.')">🖼️ View Gallery (2 Photos)</button>
             </div>
         </div>
 
@@ -285,6 +289,7 @@
                     <span class="badge">Popular Gift</span>
                     <p class="card-desc">Sturdy and personalized keychains with custom names, photos, or charms for daily wear.</p>
                 </div>
+                <button class="view-btn" onclick="openGallery('Custom Keychains', '$10', ['images/keychain_1.jpg', 'images/keychain_2.jpg'], 'Sturdy and personalized keychains with custom names, photos, or charms for daily wear.')">🖼️ View Gallery (2 Photos)</button>
             </div>
 
             <div class="card">
@@ -296,6 +301,7 @@
                     <span class="badge">Travel Essential</span>
                     <p class="card-desc">Custom name tags ideal for backpacks, luggage, school bags, or travel cases.</p>
                 </div>
+                <button class="view-btn" onclick="openGallery('Personalized Bag Name Tag', '$10', ['images/nametag_1.jpg', 'images/nametag_2.jpg'], 'Custom name tags ideal for backpacks, luggage, school bags, or travel cases.')">🖼️ View Gallery (2 Photos)</button>
             </div>
 
             <div class="card">
@@ -307,6 +313,7 @@
                     <span class="badge">Everyday Essential</span>
                     <p class="card-desc">Customized Tshirt ideal for special occassions or everyday use. Contact us to know more.</p>
                 </div>
+                <button class="view-btn" onclick="openGallery('Personalized Bag Name Tag', '$10', ['images/nametag_1.jpg', 'images/nametag_2.jpg'], 'Custom name tags ideal for backpacks, luggage, school bags, or travel cases.')">🖼️ View Gallery (2 Photos)</button>
             </div>
         </div>
 
@@ -322,6 +329,7 @@
                     <span class="badge">Kids Favorite</span>
                     <p class="card-desc">Mini customizable line-art coloring book crafted around your selected theme with a personalized name cover.</p>
                 </div>
+                <button class="view-btn" onclick="openGallery('Custom Theme Coloring Book', '$5', ['images/coloring_cover.jpg', 'images/coloring_page1.jpg', 'images/coloring_page2.jpg'], 'Mini customizable line-art coloring book crafted around your selected theme with a personalized name cover.')">🖼️ View Gallery (3 Photos)</button>
             </div>
 
             <div class="card">
@@ -334,6 +342,7 @@
                     <p class="card-desc">Custom-designed greeting cards with personal messages, artwork, or photos. Includes envelope.</p>
                 </div>
             </div>
+            <button class="view-btn" onclick="openGallery('Customizable Greeting Cards', '$8', ['images/card_outside.jpg', 'images/card_inside.jpg'], 'Custom-designed greeting cards with personal messages, artwork, or photos. Includes envelope.')">🖼️ View Gallery (2 Photos)</button>
 
             <div class="card">
                 <div>
@@ -344,6 +353,7 @@
                     <span class="badge">Multi-Use</span>
                     <p class="card-desc">Tailored sticker sheets or label sets for water bottles, laptops, gifts, or personal branding.</p>
                 </div>
+                <button class="view-btn" onclick="openGallery('Custom Stickers & Labels', '$10', ['images/stickers_sheet.jpg', 'images/stickers_applied.jpg'], 'Tailored sticker sheets or label sets for water bottles, laptops, gifts, or personal branding.')">🖼️ View Gallery (2 Photos)</button>
             </div>
 
             <div class="card">
@@ -355,6 +365,7 @@
                     <span class="badge">Pack of 5</span>
                     <p class="card-desc">Pack of 5 beautifully crafted bookmarks tailored with your choice of quotes, names, or themes.</p>
                 </div>
+                <button class="view-btn" onclick="openGallery('Customizable Bookmarks', '$3', ['images/bookmarks_set.jpg', 'images/bookmark_single.jpg'], 'Pack of 5 beautifully crafted bookmarks tailored with your choice of quotes, names, or themes.')">🖼️ View Gallery (2 Photos)</button>
             </div>
         </div>
 
@@ -420,12 +431,100 @@
         </div>
 
     </div>
-
+<!-- Product Image Gallery Popup Modal -->
+    <div id="productModal" class="modal" onclick="closeModalOutside(event)">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle" class="modal-title"></h3>
+            <div id="modalPrice" class="modal-price"></div>
+            
+            <!-- Image Carousel Container -->
+            <div class="carousel-container">
+                <button class="nav-arrow prev" onclick="changeSlide(-1)">&#10094;</button>
+                <img id="modalImg" src="" alt="Product Sample" class="modal-img">
+                <button class="nav-arrow next" onclick="changeSlide(1)">&#10095;</button>
+            </div>
+            
+            <!-- Thumbnail Navigation Strip -->
+            <div id="thumbStrip" class="thumbnail-strip"></div>
+            
+            <p id="modalDesc" class="modal-desc"></p>
+        </div>
+    </div>
     <footer>
         <p>&copy; Rejoice Customs. All Rights Reserved.</p>
         <p>Direct Message us on Instagram: <a href="https://instagram.com/rejoice_customs" target="_blank">@rejoice_customs</a>
           or <a href="mailto:customsrejoice@gmail.com">Email us</a></p>
     </footer>
+<script>
+        let currentImages = [];
+        let currentImageIndex = 0;
 
+        function openGallery(title, price, imageArray, desc) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalPrice').innerText = price;
+            document.getElementById('modalDesc').innerText = desc;
+            
+            currentImages = imageArray;
+            currentImageIndex = 0;
+            
+            updateGalleryView();
+            
+            const modal = document.getElementById('productModal');
+            modal.style.display = 'flex';
+        }
+
+        function updateGalleryView() {
+            // Update main image
+            document.getElementById('modalImg').src = currentImages[currentImageIndex];
+            
+            // Build thumbnails
+            const thumbStrip = document.getElementById('thumbStrip');
+            thumbStrip.innerHTML = '';
+            
+            // Hide navigation arrows if there's only 1 image
+            const prevBtn = document.querySelector('.nav-arrow.prev');
+            const nextBtn = document.querySelector('.nav-arrow.next');
+            if (currentImages.length <= 1) {
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+            } else {
+                prevBtn.style.display = 'flex';
+                nextBtn.style.display = 'flex';
+            }
+
+            currentImages.forEach((imgSrc, index) => {
+                const thumb = document.createElement('img');
+                thumb.src = imgSrc;
+                thumb.className = 'thumb' + (index === currentImageIndex ? ' active' : '');
+                thumb.onclick = function() {
+                    currentImageIndex = index;
+                    updateGalleryView();
+                };
+                thumbStrip.appendChild(thumb);
+            });
+        }
+
+        function changeSlide(direction) {
+            currentImageIndex += direction;
+            if (currentImageIndex < 0) {
+                currentImageIndex = currentImages.length - 1;
+            } else if (currentImageIndex >= currentImages.length) {
+                currentImageIndex = 0;
+            }
+            updateGalleryView();
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+
+        function closeModalOutside(event) {
+            const modal = document.getElementById('productModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
 </body>
 </html>
