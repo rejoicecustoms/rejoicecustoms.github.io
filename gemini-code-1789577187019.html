@@ -1,0 +1,77 @@
+---
+layout: default
+title: Rejoice Customs | Personalized Keepsakes & Gifts
+---
+
+<div class="container">
+    {% assign categories = site.products | map: "category" | uniq %}
+    
+    {% for category in categories %}
+    <h2 class="section-title">{{ category }}</h2>
+    <div class="grid">
+        {% assign items = site.products | where: "category", category %}
+        {% for item in items %}
+        <div class="card">
+            <div>
+                <div class="card-header">
+                    <div class="card-title">{{ item.title }}</div>
+                    <div class="card-price">${{ item.price }}</div>
+                </div>
+                <span class="badge">{{ item.badge }}</span>
+                <p class="card-desc">{{ item.description }}</p>
+            </div>
+            <button class="view-btn" onclick="openGallery('{{ item.title | escape }}', '${{ item.price }}', [{% for img in item.images %}'{{ img | relative_url }}'{% unless forloop.last %}, {% endunless %}{% endfor %}], '{{ item.description | escape }}')">
+                🖼️ View Gallery ({{ item.images.size }} Photo{% if item.images.size > 1 %}s{% endif %})
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+    <div class="order-section">
+        <h2 class="section-title" style="margin-bottom: 10px;">How to Place an Order</h2>
+        <p style="text-align: center; color: var(--text-light);">Ordering your custom items is quick and simple!</p>
+        
+        <div class="order-steps">
+            <div class="step">
+                <div class="step-num">1</div>
+                <strong>Browse & Select</strong>
+                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 6px;">Choose your favorite custom items from our catalogue.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <strong>Send a DM</strong>
+                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 6px;">Message us on Instagram at @{{ site.instagram_username }}.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <strong>Share Details</strong>
+                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 6px;">Provide your photos, names, text, or chosen themes.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <strong>Approve & Pay</strong>
+                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 6px;">Review design layout proof and confirm your order!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="productModal" class="modal" onclick="closeModalOutside(event)">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h3 id="modalTitle" class="modal-title"></h3>
+        <div id="modalPrice" class="modal-price"></div>
+        
+        <div class="carousel-container">
+            <button class="nav-arrow prev" onclick="changeSlide(-1)">&#10094;</button>
+            <img id="modalImg" src="" alt="Product Sample" class="modal-img">
+            <button class="nav-arrow next" onclick="changeSlide(1)">&#10095;</button>
+        </div>
+        
+        <div id="thumbStrip" class="thumbnail-strip"></div>
+        <p id="modalDesc" class="modal-desc"></p>
+    </div>
+</div>
+
+<script src="{{ '/assets/js/gallery.js' | relative_url }}"></script>

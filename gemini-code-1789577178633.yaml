@@ -1,0 +1,16 @@
+title: Rejoice Customs
+description: Personalized Keepsakes, Custom Stationery & Tailored Gifts
+baseurl: ""
+url: ""
+instagram_username: rejoice_customs
+
+collections:
+  products:
+    output: false
+
+defaults:
+  - scope:
+      path: ""
+      type: "products"
+    values:
+      layout: "default"

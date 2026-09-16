@@ -1,0 +1,15 @@
+my-jekyll-site/
+├── _config.yml
+├── index.html
+├── _layouts/
+│   └── default.html
+├── _products/
+│   ├── rock-stone-frame.md
+│   ├── photo-frame.md
+│   ├── ceramic-mugs.md
+│   └── theme-coloring-book.md
+└── assets/
+    ├── css/
+    │   └── style.css
+    └── js/
+        └── gallery.js
