@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATELIER STUDIO | Custom Hoodie Configurator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        /* Custom sleek scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* Custom range slider */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 6px;
+            border-radius: 9999px;
+            background: #e2e8f0;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            margin-top: -5px;
+            background-color: #2563eb;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            transition: transform 0.15s ease;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+        .studio-grid-bg {
+            background-color: #ffffff;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .hoodie-shadow {
+            filter: drop-shadow(0 20px 28px rgba(15, 23, 42, 0.14));
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-blue-100 selection:text-blue-900">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold shadow-sm shadow-blue-600/20">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                    </svg>
+                </div>
+                <div>
+                    <span class="font-extrabold tracking-tight text-slate-900 text-lg">ATELIER<span class="text-blue-600">LAB</span></span>
+                    <span class="hidden sm:inline-block ml-2 text-xs font-medium px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">Heavyweight 460GSM Custom Studio</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 sm:gap-5">
+                <!-- Currency Switcher -->
+                <div class="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs font-semibold">
+                    <button id="curr-cad" onclick="setCurrency('CAD')" class="px-2.5 py-1 rounded-md bg-white text-blue-600 shadow-sm transition">CAD $</button>
+                    <button id="curr-usd" onclick="setCurrency('USD')" class="px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition">USD $</button>
+                </div>
+
+                <button onclick="toggleSizeGuide(true)" class="text-xs sm:text-sm font-medium text-slate-600 hover:text-blue-600 flex items-center gap-1.5 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    <span class="hidden sm:inline">Size Chart</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Toast / Notification Banner -->
+    <div id="toast-banner" class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 text-sm font-medium border border-slate-700">
+            <span id="toast-icon" class="w-2 h-2 rounded-full bg-blue-400"></span>
+            <span id="toast-message">Notification</span>
+        </div>
+    </div>
+
+    <!-- Main Studio Layout -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+
+            <!-- LEFT COLUMN: Live Interactive Hoodie Preview Stage (7 cols on lg) -->
+            <div class="lg:col-span-7 lg:sticky lg:top-24 space-y-4">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <!-- Stage Top Bar -->
+                    <div class="px-4 sm:px-6 py-3.5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3 bg-slate-50/60">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+                            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Live Studio Mockup</span>
+                            <span id="active-color-badge" class="ml-1 text-xs font-medium px-2.5 py-0.5 rounded-full bg-white border border-slate-200 text-slate-700">Crisp White</span>
+                        </div>
+
+                        <!-- Front / Back Toggle -->
+                        <div class="inline-flex rounded-xl bg-slate-200/70 p-1">
+                            <button id="btn-view-front" onclick="setView('front')" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-white text-blue-600 shadow-sm transition">
+                                Front View
+                            </button>
+                            <button id="btn-view-back" onclick="setView('back')" class="px-4 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition">
+                                Back View
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Interactive SVG Canvas Area -->
+                    <div class="relative studio-grid-bg flex items-center justify-center p-4 sm:p-8 min-h-[420px] sm:min-h-[520px] select-none overflow-hidden">
+                        <!-- Subtle Print Safe-Zone Indicator Pill -->
+                        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-lg px-3 py-1.5 text-[11px] font-medium text-slate-600 shadow-sm flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-xs border border-dashed border-blue-500 bg-blue-50"></span>
+                            <span>Placement: <strong id="hud-placement" class="text-slate-900">Center Chest</strong></span>
+                        </div>
+
+                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm border border-slate-200 rounded-lg px-3 py-1.5 text-[11px] font-medium text-slate-600 shadow-sm">
+                            Scale: <strong id="hud-scale" class="text-blue-600">100%</strong>
+                        </div>
+
+                        <!-- Realistic Vector Hoodie Mockup SVG -->
+                        <svg id="hoodie-svg" viewBox="0 0 500 560" class="w-full max-w-[440px] h-auto hoodie-shadow transition-all duration-300" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <!-- Fabric shading gradient -->
+                                <linearGradient id="fabric-shade" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#000000" stop-opacity="0.10"/>
+                                    <stop offset="18%" stop-color="#000000" stop-opacity="0.02"/>
+                                    <stop offset="50%" stop-color="#ffffff" stop-opacity="0.07"/>
+                                    <stop offset="82%" stop-color="#000000" stop-opacity="0.02"/>
+                                    <stop offset="100%" stop-color="#000000" stop-opacity="0.12"/>
+                                </linearGradient>
+                                <linearGradient id="hood-inner" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#000000" stop-opacity="0.32"/>
+                                    <stop offset="100%" stop-color="#000000" stop-opacity="0.14"/>
+                                </linearGradient>
+                                <filter id="print-blend" x="-10%" y="-10%" width="120%" height="120%">
+                                    <feDropShadow dx="0" dy="1" stdDeviation="0.6" flood-opacity="0.15"/>
+                                </filter>
+                            </defs>
+
+                            <!-- LEFT SLEEVE -->
+                            <g id="hoodie-left-sleeve">
+                                <path class="fabric-fill transition-colors duration-300" fill="#F8FAFC" stroke="#cbd5e1" stroke-width="1.2"
+                                    d="M142,115 C102,135 66,225 46,355 L38,415 L84,424 L106,355 C120,295 132,235 148,195 Z"/>
+                                <path fill="url(#fabric-shade)" d="M142,115 C102,135 66,225 46,355 L38,415 L84,424 L106,355 C120,295 132,235 148,195 Z"/>
+                                <!-- Left Ribbed Cuff -->
+                                <path class="fabric-fill transition-colors duration-300" fill="#F8FAFC" stroke="#cbd5e1" stroke-width="1.2"
+                                    d="M38,415 L84,424 L78,462 L35,453 Z"/>
+                                <path fill="#000000" fill-opacity="0.06" d="M38,415 L84,424 L78,462 L35,453 Z"/>
+                            </g>
+
+                            <!-- RIGHT SLEEVE -->
+                            <g id="hoodie-right-sleeve">
+                                <path class="fabric-fill transition-colors duration-300" fill="#F8FAFC" stroke="#cbd5e1" stroke-width="1.2"
+                                    d="M358,115 C398,135 434,225 454,355 L462,415 L416,424 L394,355 C380,295 368,235 352,195 Z"/>
+                                <path fill="url(#fabric-shade)" d="M358,115 C398,135 434,225 454,355 L462,415 L416,424 L394,355 C380,295 368,235 352,195 Z"/>
+                                <!-- Right Ribbed Cuff -->
+                                <path class="fabric-fill transition-colors duration-300" fill="#F8FAFC" stroke="#cbd5e1" stroke-width="1.2"
+                                    d="M462,415 L416,424 L422,462 L465,453 Z"/>
+                                <path fill="#000000" fill-opacity="0.06" d="M462,415 L416,424 L422,462 L465,453 Z"/>
+                            </g>
+
+                            <!-- MAIN TORSO BODY -->
+                            <g id="hoodie-torso">
+                                <path class="fabric-fill transition-colors duration-300" fill="#F8FAFC" stroke="#cbd5e1" stroke-width="1.2"
+                                    d="M142,115 Q195,95 250,95 Q305,95 358,115 L368,468 L132,468 Z"/>
+                                <path fill="url(#fabric-shade)" d="M142,115 Q195,95 250,95 Q305,95 358,115 L368,468 L132,468 Z"/>
+
+                                <!-- Bottom Ribbed Waistband -->
+                                <path class="fabric-fill transition-colors duration-300" fill="#F8FAFC" stroke="#cbd5e1" stroke-width="1.2"
+                                    d="M132,468 L368,468 L364,512 L136,512 Z"/>
+                                <path fill="#000000" fill-opacity="0.06" d="M132,468 L368,468 L364,512 L136,512 Z"/>
+                                <!-- Subtle Ribbing Lines -->
+                                <path stroke="#000000" stroke-opacity="0.08" stroke-width="1" stroke-dasharray="2,6" d="M138,472 L138,508 M160,472 L160,508 M185,472 L185,508 M210,472 L210,508 M235,472 L235,508 M265,472 L265,508 M290,472 L290,508 M315,472 L315,508 M340,472 L340,508 M360,472 L360,508"/>
+                            </g>
+
+                            <!-- FRONT VIEW SPECIFIC DETAILS (Kangaroo Pocket, Front Hood Opening, Drawstrings) -->
+                            <g id="hoodie-front-details">
+                                <!-- Kangaroo Pocket -->
+                                <path class="fabric-fill transition-colors duration-300" fill="#F8FAFC" stroke="#94a3b8" stroke-opacity="0.45" stroke-width="1.2"
+                                    d="M174,342 L326,342 L344,412 L344,466 L156,466 L156,412 Z"/>
+                                <path fill="#000000" fill-opacity="0.03" d="M174,342 L326,342 L344,412 L344,466 L156,466 L156,412 Z"/>
+                                <!-- Pocket Slant Openings -->
+                                <path fill="none" stroke="#000000" stroke-opacity="0.18" stroke-width="2" stroke-linecap="round" d="M174,342 L156,412 M326,342 L344,412"/>
+
+                                <!-- Hood Exterior (Front View) -->
+                                <path class="fabric-fill transition-colors duration-300" fill="#F8FAFC" stroke="#cbd5e1" stroke-width="1.2"
+                                    d="M178,104 C172,52 204,24 250,24 C296,24 328,52 322,104 C304,132 274,146 250,146 C226,146 196,132 178,104 Z"/>
+                                <!-- Hood Inner Shadow Opening -->
+                                <path fill="url(#hood-inner)" d="M196,102 C194,62 216,42 250,42 C284,42 306,62 304,102 C288,125 268,136 250,136 C232,136 212,125 196,102 Z"/>
+                                <!-- Drawstring Eyelets & Cords -->
+                                <circle cx="228" cy="134" r="3" fill="#475569"/>
+                                <circle cx="272" cy="134" r="3" fill="#475569"/>
+                                <path class="cord-stroke" stroke="#e2e8f0" stroke-width="3.5" stroke-linecap="round" fill="none" d="M228,135 Q225,180 227,215"/>
+                                <path class="cord-stroke" stroke="#e2e8f0" stroke-width="3.5" stroke-linecap="round" fill="none" d="M272,135 Q275,180 273,215"/>
+                                <!-- Metal Aglets -->
+                                <rect x="225" y="212" width="4" height="10" rx="1.5" fill="#94a3b8"/>
+                                <rect x="271" y="212" width="4" height="10" rx="1.5" fill="#94a3b8"/>
+                            </g>
+
+                            <!-- BACK VIEW SPECIFIC DETAILS (Draped Back Hood & Yoke Seam) -->
+                            <g id="hoodie-back-details" class="hidden">
+                                <!-- Back Shoulder Yoke Seam -->
+                                <path fill="none" stroke="#000000" stroke-opacity="0.12" stroke-width="1.2" stroke-dasharray="3,2" d="M144,148 Q250,164 356,148"/>
+                                <!-- Draped Back Hood -->
+                                <path class="fabric-fill transition-colors duration-300" fill="#F8FAFC" stroke="#cbd5e1" stroke-width="1.2"
+                                    d="M174,102 C176,40 208,22 250,22 C292,22 324,40 326,102 C332,145 304,184 250,188 C196,184 168,145 174,102 Z"/>
+                                <path fill="#000000" fill-opacity="0.06"
+                                    d="M174,102 C176,40 208,22 250,22 C292,22 324,40 326,102 C332,145 304,184 250,188 C196,184 168,145 174,102 Z"/>
+                                <!-- Center Hood Seam -->
+                                <path fill="none" stroke="#000000" stroke-opacity="0.14" stroke-width="1.5" d="M250,22 L250,188"/>
+                            </g>
+
+                            <!-- PRINT SAFE-ZONE GUIDE BOX -->
+                            <rect id="print-zone-guide" x="185" y="175" width="130" height="145" rx="6" fill="none" stroke="#3b82f6" stroke-opacity="0.35" stroke-width="1.2" stroke-dasharray="4,4"/>
+
+                            <!-- DYNAMIC ARTWORK LAYER (Centered via transform group) -->
+                            <g id="artwork-transform-group" transform="translate(250, 245) scale(1)" filter="url(#print-blend)">
+                                <!-- Rendered Graphic / Uploaded Image goes inside here -->
+                                <g id="artwork-render-target"></g>
+                            </g>
+                        </svg>
+
+                        <!-- Quick Placement & Scale Overlay Controls at Bottom of Canvas -->
+                        <div class="absolute bottom-4 inset-x-4 sm:inset-x-8 bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-xl p-3 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+                            <!-- Placement Presets -->
+                            <div class="flex items-center gap-1.5 w-full sm:w-auto justify-center">
+                                <span class="text-[11px] font-semibold text-slate-400 uppercase mr-1 hidden md:inline">Zone:</span>
+                                <button onclick="setPlacement('center-chest')" data-placement="center-chest" class="placement-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white transition">
+                                    Center Chest
+                                </button>
+                                <button onclick="setPlacement('left-chest')" data-placement="left-chest" class="placement-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">
+                                    Left Chest
+                                </button>
+                                <button onclick="setPlacement('full-back')" data-placement="full-back" class="placement-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">
+                                    Full Back
+                                </button>
+                            </div>
+
+                            <!-- Scale Slider -->
+                            <div class="flex items-center gap-2.5 w-full sm:w-48">
+                                <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
+                                <input id="scale-slider" type="range" min="45" max="145" value="100" oninput="setScale(this.value)" class="w-full">
+                                <button onclick="setScale(100)" title="Reset Scale" class="text-[11px] font-semibold text-blue-600 hover:underline shrink-0">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Garment Specs Strip -->
+                <div class="grid grid-cols-3 gap-3 text-center">
+                    <div class="bg-white rounded-xl border border-slate-200 p-3">
+                        <p class="text-[11px] font-medium text-slate-400 uppercase">Fabric Weight</p>
+                        <p class="text-xs sm:text-sm font-bold text-slate-800 mt-0.5">460 GSM Fleece</p>
+                    </div>
+                    <div class="bg-white rounded-xl border border-slate-200 p-3">
+                        <p class="text-[11px] font-medium text-slate-400 uppercase">Print Method</p>
+                        <p class="text-xs sm:text-sm font-bold text-slate-800 mt-0.5">HD Matte DTF / Puff</p>
+                    </div>
+                    <div class="bg-white rounded-xl border border-slate-200 p-3">
+                        <p class="text-[11px] font-medium text-slate-400 uppercase">Turnaround</p>
+                        <p class="text-xs sm:text-sm font-bold text-blue-600 mt-0.5">3–5 Business Days</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: Configuration & Order Intake Form (5 cols on lg) -->
+            <div class="lg:col-span-5 space-y-6">
+
+                <!-- Setup Checklist Notice Banner (Auto-hides once RECEIVER_EMAIL is configured) -->
+                <div id="formsubmit-setup-banner" class="hidden bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start justify-between gap-3 shadow-xs">
+                    <div class="flex items-start gap-2.5">
+                        <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <div class="text-xs text-amber-900 space-y-1.5">
+                            <p class="font-bold">2-Step Email Setup (Free Direct Attachments via FormSubmit)</p>
+                            <ol class="list-decimal list-inside space-y-1 text-amber-800">
+                                <li>Replace <code class="px-1 py-0.5 bg-amber-100 rounded font-mono text-[11px]">YOUR_EMAIL_HERE</code> in <code class="px-1 py-0.5 bg-amber-100 rounded font-mono text-[11px]">RECEIVER_EMAIL</code> with your email address.</li>
+                                <li>Submit one test order and click the one-time activation link FormSubmit sends to your inbox.</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <button type="button" onclick="document.getElementById('formsubmit-setup-banner').classList.add('hidden')" class="text-amber-600 hover:text-amber-900 p-1 rounded-lg" title="Dismiss notice">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+
+                <!-- STEP 1: Color & Size Selection -->
+                <section class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-5">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">1</span>
+                            Garment Color & Size
+                        </h2>
+                        <span id="selected-color-name" class="text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md">Crisp White</span>
+                    </div>
+
+                    <!-- Color Swatches -->
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2.5">Select Hoodie Colorway</label>
+                        <div id="color-swatches" class="flex flex-wrap gap-2.5">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Size Selector & Quantity -->
+                    <div class="pt-2 border-t border-slate-100">
+                        <div class="flex items-center justify-between mb-2.5">
+                            <label class="text-xs font-semibold uppercase tracking-wider text-slate-500">Select Size</label>
+                            <button type="button" onclick="toggleSizeGuide(true)" class="text-xs font-semibold text-blue-600 hover:text-blue-700 underline">View Size Guide</button>
+                        </div>
+                        <div id="size-buttons" class="grid grid-cols-7 gap-1.5">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Quantity & Print Finish -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Quantity</label>
+                            <div class="flex items-center border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
+                                <button type="button" onclick="updateQuantity(-1)" class="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-200 font-bold transition">−</button>
+                                <input id="qty-input" type="number" min="1" max="500" value="1" onchange="setQuantity(this.value)" class="w-full text-center bg-transparent font-bold text-sm text-slate-900 focus:outline-none">
+                                <button type="button" onclick="updateQuantity(1)" class="w-10 h-10 flex items-center justify-center text-slate-600 hover:bg-slate-200 font-bold transition">+</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Print Finish</label>
+                            <select id="print-finish" onchange="updatePricing()" class="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="standard">Standard Matte DTF (+$0)</option>
+                                <option value="puff">3D Raised Puff Ink (+$8)</option>
+                                <option value="metallic">Metallic Foil Accent (+$10)</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STEP 2: Design Selection or Custom Upload -->
+                <section class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">2</span>
+                            Artwork & Customization
+                        </h2>
+                    </div>
+
+                    <!-- Mode Tabs -->
+                    <div class="grid grid-cols-2 p-1 bg-slate-100 rounded-xl border border-slate-200/80">
+                        <button type="button" id="tab-gallery" onclick="switchDesignTab('gallery')" class="py-2 px-3 rounded-lg text-xs font-bold bg-white text-blue-600 shadow-sm transition">
+                            Studio Templates
+                        </button>
+                        <button type="button" id="tab-upload" onclick="switchDesignTab('upload')" class="py-2 px-3 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition">
+                            Upload Custom File
+                        </button>
+                    </div>
+
+                    <!-- TAB A: Curated Vector Templates -->
+                    <div id="panel-gallery" class="space-y-4">
+                        <div id="template-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                            <!-- Populated by JS -->
+                        </div>
+
+                        <!-- Custom Monogram Text Input (visible when Monogram template is active) -->
+                        <div id="monogram-customizer" class="hidden p-3.5 rounded-xl bg-blue-50/70 border border-blue-100 space-y-2">
+                            <label class="block text-xs font-bold text-blue-900">Custom Monogram Initials / Text (Max 6 chars)</label>
+                            <input id="monogram-text" type="text" maxlength="6" value="ATL" oninput="updateMonogramText(this.value)" placeholder="e.g. NYC or J.D." class="w-full px-3 py-2 rounded-lg border border-blue-200 bg-white text-sm font-bold uppercase tracking-widest text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <!-- Artwork Ink Color Override for Vector Templates -->
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-xs font-semibold text-slate-500">Graphic Ink Tint:</span>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="setArtworkTint('auto')" class="px-2 py-1 text-[11px] font-semibold rounded bg-slate-100 hover:bg-slate-200 text-slate-700">Auto Contrast</button>
+                                <button type="button" onclick="setArtworkTint('#2563EB')" class="w-5 h-5 rounded-full bg-blue-600 border border-slate-300" title="Cobalt Blue"></button>
+                                <button type="button" onclick="setArtworkTint('#0F172A')" class="w-5 h-5 rounded-full bg-slate-900 border border-slate-300" title="Obsidian"></button>
+                                <button type="button" onclick="setArtworkTint('#FFFFFF')" class="w-5 h-5 rounded-full bg-white border border-slate-300" title="Pure White"></button>
+                                <button type="button" onclick="setArtworkTint('#F59E0B')" class="w-5 h-5 rounded-full bg-amber-500 border border-slate-300" title="Gold"></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB B: Custom File Upload -->
+                    <div id="panel-upload" class="hidden space-y-3">
+                        <div id="drop-zone" class="border-2 border-dashed border-slate-300 hover:border-blue-500 rounded-xl p-6 text-center cursor-pointer transition bg-slate-50/60 hover:bg-blue-50/30">
+                            <input type="file" id="file-input" accept="image/png, image/jpeg, image/svg+xml" class="hidden" onchange="handleFileUpload(this.files[0])">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 mx-auto flex items-center justify-center mb-2.5">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                            </div>
+                            <p class="text-sm font-semibold text-slate-800">Click to upload or drag & drop</p>
+                            <p class="text-xs text-slate-500 mt-1">Supports transparent PNG, high-res JPG, or SVG (Max 9.5MB for email attachment)</p>
+                        </div>
+
+                        <!-- Uploaded File Preview & Print Quality Feedback -->
+                        <div id="upload-feedback" class="hidden p-3.5 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <img id="upload-thumb" src="" alt="Preview" class="w-12 h-12 rounded-lg object-contain bg-white border border-slate-200 p-1 shrink-0">
+                                <div class="min-w-0">
+                                    <p id="upload-filename" class="text-xs font-bold text-slate-900 truncate">artwork.png</p>
+                                    <p id="upload-resolution" class="text-[11px] text-slate-500 mt-0.5">1200 × 1200 px</p>
+                                    <span id="upload-quality-badge" class="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">300 DPI • Print Ready</span>
+                                </div>
+                            </div>
+                            <button type="button" onclick="clearUploadedFile()" class="text-xs font-semibold text-rose-600 hover:text-rose-700 px-2 py-1">Remove</button>
+                        </div>
+                    </div>
+
+                    <!-- Placement Notes Field -->
+                    <div class="pt-2 border-t border-slate-100">
+                        <label for="placement-notes" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Print Placement & Production Notes</label>
+                        <input id="placement-notes" type="text" placeholder="e.g., 3 inches below collar seam, distress effect, etc." class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </section>
+
+                <!-- STEP 3: Pricing Breakdown & Order Intake Form -->
+                <form id="order-form" method="POST" enctype="multipart/form-data" onsubmit="submitOrder(event)" class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-5">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">3</span>
+                            Order Details & Checkout
+                        </h2>
+                    </div>
+
+                    <!-- Real-Time Price Breakdown Card -->
+                    <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/80 space-y-2 text-sm">
+                        <div class="flex justify-between text-slate-600">
+                            <span>460GSM Heavyweight Hoodie (<span id="price-size-label">L</span>)</span>
+                            <span id="price-base" class="font-medium text-slate-900">$68.00</span>
+                        </div>
+                        <div class="flex justify-between text-slate-600">
+                            <span>Print Placement (<span id="price-placement-label">Center Chest</span>)</span>
+                            <span id="price-placement" class="font-medium text-slate-900">$12.00</span>
+                        </div>
+                        <div id="price-addon-row" class="hidden justify-between text-slate-600">
+                            <span id="price-addon-label">Specialty Print Finish</span>
+                            <span id="price-addon" class="font-medium text-slate-900">$0.00</span>
+                        </div>
+                        <div class="flex justify-between text-slate-600">
+                            <span>Quantity</span>
+                            <span id="price-qty" class="font-medium text-slate-900">× 1</span>
+                        </div>
+                        <div id="bulk-discount-row" class="hidden justify-between text-emerald-600 font-medium text-xs">
+                            <span>Studio Bulk Discount (10% off 5+ units)</span>
+                            <span id="price-discount">-$0.00</span>
+                        </div>
+                        <div class="pt-2.5 border-t border-slate-200 flex items-baseline justify-between">
+                            <span class="font-bold text-slate-900">Estimated Total</span>
+                            <div class="text-right">
+                                <span id="price-total" class="text-xl font-extrabold text-blue-600">$80.00</span>
+                                <span id="price-currency-tag" class="text-xs font-bold text-slate-400 ml-1">CAD</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer Details -->
+                    <div class="space-y-3.5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Full Name <span class="text-rose-500">*</span></label>
+                                <input id="cust-name" type="text" required placeholder="Alex Mercer" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Email Address <span class="text-rose-500">*</span></label>
+                                <input id="cust-email" type="email" required placeholder="alex@studio.com" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Phone Number <span class="text-slate-400 font-normal">(Optional — for SMS/print proof updates)</span></label>
+                            <input id="cust-phone" type="tel" placeholder="+1 (416) 555-0198" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <!-- Delivery vs Studio Pickup -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Fulfillment Method</label>
+                            <div class="grid grid-cols-2 gap-2.5">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="fulfillment" value="Express Courier Delivery" checked onchange="toggleAddressField(true)" class="peer sr-only">
+                                    <div class="p-2.5 rounded-xl border border-slate-200 peer-checked:border-blue-600 peer-checked:bg-blue-50/60 text-center transition">
+                                        <p class="text-xs font-bold text-slate-900">Courier Delivery</p>
+                                        <p class="text-[11px] text-slate-500">Tracked Shipping</p>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="fulfillment" value="Toronto Studio Pickup" onchange="toggleAddressField(false)" class="peer sr-only">
+                                    <div class="p-2.5 rounded-xl border border-slate-200 peer-checked:border-blue-600 peer-checked:bg-blue-50/60 text-center transition">
+                                        <p class="text-xs font-bold text-slate-900">Studio Pickup</p>
+                                        <p class="text-[11px] text-slate-500">Queen St W, Toronto</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="shipping-address-box">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Shipping Address <span class="text-rose-500">*</span></label>
+                            <input id="cust-address" type="text" required placeholder="420 King St W, Suite 300, Toronto, ON" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Special Order Instructions (Optional)</label>
+                            <textarea id="cust-notes" rows="2" placeholder="Gift packaging, Pantone color matching notes, or deadline requests..." class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Submission Error Alert Box -->
+                    <div id="submit-error-box" class="hidden p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800 space-y-2">
+                        <p class="font-bold flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span id="submit-error-title">Email Delivery Failed</span>
+                        </p>
+                        <p id="submit-error-msg" class="text-rose-700 leading-relaxed">We couldn't transmit your order over the network. You can generate an offline backup receipt below.</p>
+                        <button type="button" onclick="openFallbackReceiptModal()" class="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold transition">
+                            Open Backup Ticket &amp; Copy Receipt
+                        </button>
+                    </div>
+
+                    <button id="submit-order-btn" type="submit" class="w-full py-3.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold text-sm shadow-md shadow-blue-600/20 transition flex items-center justify-center gap-2">
+                        <svg id="submit-spinner" class="hidden animate-spin w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span id="submit-btn-text">Submit Order</span>
+                        <svg id="submit-arrow-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- SIZE GUIDE MODAL -->
+    <div id="size-guide-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full border border-slate-200 shadow-2xl overflow-hidden animate-fade-in">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                    <h3 class="font-bold text-slate-900">Boxy Heavyweight Hoodie Size Guide</h3>
+                    <p class="text-xs text-slate-500">Measurements in inches • Pre-shrunk 100% Cotton Fleece</p>
+                </div>
+                <button onclick="toggleSizeGuide(false)" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="p-6 overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="border-b border-slate-200 text-xs uppercase text-slate-500">
+                            <th class="py-2.5 font-bold">Size</th>
+                            <th class="py-2.5 font-bold">Chest Width</th>
+                            <th class="py-2.5 font-bold">Body Length</th>
+                            <th class="py-2.5 font-bold">Sleeve Length</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
+                        <tr><td class="py-2.5 font-bold text-slate-900">XS</td><td>21.5"</td><td>25.5"</td><td>23.0"</td></tr>
+                        <tr><td class="py-2.5 font-bold text-slate-900">S</td><td>22.5"</td><td>26.5"</td><td>23.5"</td></tr>
+                        <tr><td class="py-2.5 font-bold text-slate-900">M</td><td>23.5"</td><td>27.5"</td><td>24.0"</td></tr>
+                        <tr class="bg-blue-50/50"><td class="py-2.5 font-bold text-blue-700">L (Standard)</td><td>24.5"</td><td>28.5"</td><td>24.5"</td></tr>
+                        <tr><td class="py-2.5 font-bold text-slate-900">XL</td><td>26.0"</td><td>29.5"</td><td>25.0"</td></tr>
+                        <tr><td class="py-2.5 font-bold text-slate-900">2XL</td><td>27.5"</td><td>30.5"</td><td>25.5"</td></tr>
+                        <tr><td class="py-2.5 font-bold text-slate-900">3XL</td><td>29.0"</td><td>31.5"</td><td>26.0"</td></tr>
+                    </tbody>
+                </table>
+                <p class="mt-4 text-xs text-slate-500 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <strong>Fit Tip:</strong> Designed with a contemporary drop-shoulder boxy silhouette. Order true to size for a relaxed streetwear fit, or size down for a tailored look.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ORDER CONFIRMATION & TICKET MODAL -->
+    <div id="confirmation-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-xl w-full border border-slate-200 shadow-2xl overflow-hidden my-8">
+            <!-- Success Header -->
+            <div class="bg-blue-600 px-6 py-5 text-white flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                    <div>
+                        <h3 id="ticket-modal-heading" class="font-extrabold text-lg">Order Sent to Studio!</h3>
+                        <p id="ticket-modal-subheading" class="text-xs text-blue-100">Your custom hoodie specs &amp; artwork have been emailed.</p>
+                    </div>
+                </div>
+                <span id="ticket-order-id" class="px-3 py-1 rounded-lg bg-blue-800/70 font-mono text-xs font-bold tracking-wider border border-blue-400/30">#ORD-2026-8492</span>
+            </div>
+
+            <!-- Demo / Unconfigured Mode Notice inside Modal -->
+            <div id="ticket-demo-notice" class="hidden bg-amber-50 border-b border-amber-200 px-6 py-3 text-xs text-amber-900">
+                <strong>Demo Mode Active:</strong> Replace <code class="bg-amber-100 px-1 rounded font-mono">YOUR_EMAIL_HERE</code> in <code class="bg-amber-100 px-1 rounded font-mono">RECEIVER_EMAIL</code> inside the script to enable direct FormSubmit email delivery with file attachments.
+            </div>
+
+            <!-- Itemized Receipt Ticket -->
+            <div class="p-6 space-y-5">
+                <div class="flex flex-col sm:flex-row gap-4 items-center bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <!-- Visual Mockup Thumbnail -->
+                    <div id="ticket-mockup-preview" class="w-28 h-32 bg-white rounded-lg border border-slate-200 flex items-center justify-center p-2 shrink-0 shadow-xs">
+                        <!-- Cloned SVG injected here -->
+                    </div>
+                    <div class="flex-1 space-y-1.5 text-center sm:text-left">
+                        <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                            <span id="ticket-color" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800">Crisp White</span>
+                            <span id="ticket-size" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-800">Size: L</span>
+                            <span id="ticket-qty" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-800">Qty: 1</span>
+                        </div>
+                        <p id="ticket-artwork-name" class="text-sm font-bold text-slate-900">Design: Minimalist Typographic</p>
+                        <p id="ticket-placement" class="text-xs text-slate-600">Placement: Center Chest (100% Scale) • Standard Matte DTF</p>
+                        <p id="ticket-notes" class="text-xs text-slate-500 italic"></p>
+                        <!-- Direct Email Attachment Confirmation Badge -->
+                        <div id="ticket-attachment-badge" class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 mt-1">
+                            <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+                            <span id="ticket-attachment-text">Mockup PNG proof attached directly to order email</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer & Total Summary -->
+                <div class="grid grid-cols-2 gap-4 text-xs border-y border-slate-100 py-4">
+                    <div>
+                        <p class="text-slate-400 font-semibold uppercase">Client</p>
+                        <p id="ticket-customer" class="font-bold text-slate-900 text-sm mt-0.5">Alex Mercer</p>
+                        <p id="ticket-email" class="text-slate-600">alex@studio.com</p>
+                        <p id="ticket-phone" class="text-slate-500 mt-0.5"></p>
+                    </div>
+                    <div>
+                        <p class="text-slate-400 font-semibold uppercase">Fulfillment</p>
+                        <p id="ticket-fulfillment" class="font-bold text-slate-900 text-sm mt-0.5">Courier Delivery</p>
+                        <p id="ticket-address" class="text-slate-600 truncate">420 King St W</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-bold text-slate-700">Total Order Value</span>
+                    <span id="ticket-total" class="text-2xl font-extrabold text-blue-600">$80.00 CAD</span>
+                </div>
+
+                <!-- Actions -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2">
+                    <button type="button" onclick="copyOrderSummary()" class="py-2.5 px-4 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition">
+                        <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                        Copy Ticket
+                    </button>
+                    <button type="button" onclick="downloadOrderReceipt()" class="py-2.5 px-4 rounded-xl border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center gap-1.5 transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        Download .TXT
+                    </button>
+                    <button type="button" onclick="resetForNewOrder()" class="py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition">
+                        New Order
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // FORMSUBMIT CONFIGURATION (Free Direct Email Delivery + File Attachments)
+        // 1. Replace YOUR_EMAIL_HERE with the email address where you want orders.
+        // 2. Submit one test order & click FormSubmit's one-time activation link.
+        // =========================================================================
+        const RECEIVER_EMAIL = "YOUR_EMAIL_HERE";
+        const FORMSUBMIT_ENDPOINT = `https://formsubmit.co/ajax/${RECEIVER_EMAIL}`;
+        const MAX_TOTAL_ATTACHMENT_BYTES = 10 * 1024 * 1024; // FormSubmit 10 MB total limit
+
+        // ==========================================
+        // STUDIO DATA & CONFIGURATION STATE
+        // ==========================================
+        const COLORS = [
+            { id: 'white', name: 'Crisp White', hex: '#F8FAFC', isDark: false, cord: '#E2E8F0' },
+            { id: 'royal', name: 'Royal Blue', hex: '#1D4ED8', isDark: true, cord: '#1E40AF' },
+            { id: 'navy', name: 'Midnight Navy', hex: '#172554', isDark: true, cord: '#0F172A' },
+            { id: 'heather', name: 'Heather Gray', hex: '#CBD5E1', isDark: false, cord: '#94A3B8' },
+            { id: 'black', name: 'Jet Black', hex: '#18181B', isDark: true, cord: '#27272A' },
+            { id: 'forest', name: 'Forest Green', hex: '#14532D', isDark: true, cord: '#052E16' },
+            { id: 'sand', name: 'Desert Sand', hex: '#E7DCCB', isDark: false, cord: '#D6C7B2' }
+        ];
+
+        const SIZES = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'];
+
+        const PLACEMENTS = {
+            'center-chest': {
+                label: 'Center Chest',
+                view: 'front',
+                x: 250,
+                y: 235,
+                defaultScale: 1.0,
+                costCAD: 12,
+                guide: { x: 185, y: 170, w: 130, h: 135 }
+            },
+            'left-chest': {
+                label: 'Left Chest',
+                view: 'front',
+                x: 295,
+                y: 205,
+                defaultScale: 0.45,
+                costCAD: 9,
+                guide: { x: 268, y: 178, w: 54, h: 54 }
+            },
+            'full-back': {
+                label: 'Full Back',
+                view: 'back',
+                x: 250,
+                y: 270,
+                defaultScale: 1.25,
+                costCAD: 18,
+                guide: { x: 170, y: 185, w: 160, h: 180 }
+            }
+        };
+
+        // Curated Crisp Vector Templates
+        const TEMPLATES = [
+            {
+                id: 'minimal-typo',
+                name: 'Minimalist Typographic',
+                tag: 'Studio Series',
+                render: (ink) => `
+                    <g transform="translate(-60, -45)">
+                        <rect x="4" y="4" width="112" height="82" fill="none" stroke="${ink}" stroke-width="2.5"/>
+                        <text x="60" y="36" text-anchor="middle" fill="${ink}" font-family="Inter, sans-serif" font-weight="800" font-size="18" letter-spacing="3">ATELIER</text>
+                        <line x1="22" y1="46" x2="98" y2="46" stroke="${ink}" stroke-width="1.5"/>
+                        <text x="60" y="64" text-anchor="middle" fill="${ink}" font-family="Inter, sans-serif" font-weight="500" font-size="8.5" letter-spacing="2.5">EST. TORONTO • 26</text>
+                        <text x="60" y="77" text-anchor="middle" fill="${ink}" font-family="Inter, sans-serif" font-weight="700" font-size="7" letter-spacing="1.5">HEAVYWEIGHT DIVISION</text>
+                    </g>
+                `
+            },
+            {
+                id: 'retro-wave',
+                name: 'Retro Horizon Wave',
+                tag: '80s Synth',
+                render: (ink) => `
+                    <g transform="translate(-55, -55)">
+                        <circle cx="55" cy="50" r="42" fill="none" stroke="${ink}" stroke-width="3"/>
+                        <path d="M16,52 L94,52 M18,61 L92,61 M23,70 L87,70 M31,79 L79,79" stroke="${ink}" stroke-width="2.5"/>
+                        <path d="M22,46 L42,24 L56,40 L72,20 L88,46 Z" fill="${ink}"/>
+                        <text x="55" y="106" text-anchor="middle" fill="${ink}" font-family="Inter, sans-serif" font-weight="800" font-size="11" letter-spacing="4">HORIZON</text>
+                    </g>
+                `
+            },
+            {
+                id: 'geo-crest',
+                name: 'Geometric Crest',
+                tag: 'Modern Emblem',
+                render: (ink) => `
+                    <g transform="translate(-50, -55)">
+                        <polygon points="50,6 92,30 92,78 50,102 8,78 8,30" fill="none" stroke="${ink}" stroke-width="3"/>
+                        <polygon points="50,16 82,35 82,73 50,92 18,73 18,35" fill="none" stroke="${ink}" stroke-width="1.2"/>
+                        <circle cx="50" cy="54" r="16" fill="none" stroke="${ink}" stroke-width="2.5"/>
+                        <line x1="50" y1="16" x2="50" y2="92" stroke="${ink}" stroke-width="1.5"/>
+                        <line x1="18" y1="54" x2="82" y2="54" stroke="${ink}" stroke-width="1.5"/>
+                    </g>
+                `
+            },
+            {
+                id: 'street-emblem',
+                name: 'Streetwear Globe',
+                tag: 'Archive',
+                render: (ink) => `
+                    <g transform="translate(-55, -55)">
+                        <circle cx="55" cy="50" r="36" fill="none" stroke="${ink}" stroke-width="2.5"/>
+                        <ellipse cx="55" cy="50" rx="16" ry="36" fill="none" stroke="${ink}" stroke-width="2"/>
+                        <line x1="19" y1="50" x2="91" y2="50" stroke="${ink}" stroke-width="2"/>
+                        <path d="M25,32 Q55,40 85,32 M25,68 Q55,60 85,68" fill="none" stroke="${ink}" stroke-width="1.8"/>
+                        <rect x="12" y="41" width="86" height="18" rx="2" fill="${ink}"/>
+                        <text x="55" y="53" text-anchor="middle" fill="${ink === '#FFFFFF' ? '#0F172A' : '#FFFFFF'}" font-family="Inter, sans-serif" font-weight="800" font-size="10" letter-spacing="2.5">WORLDWIDE</text>
+                    </g>
+                `
+            },
+            {
+                id: 'monogram',
+                name: 'Custom Monogram',
+                tag: 'Personalized',
+                render: (ink, customText = 'ATL') => `
+                    <g transform="translate(-60, -50)">
+                        <rect x="10" y="10" width="100" height="80" rx="40" fill="none" stroke="${ink}" stroke-width="3"/>
+                        <text x="60" y="58" text-anchor="middle" fill="${ink}" font-family="Inter, sans-serif" font-weight="900" font-size="28" letter-spacing="2">${escapeXml(customText || 'ATL')}</text>
+                        <text x="60" y="75" text-anchor="middle" fill="${ink}" font-family="Inter, sans-serif" font-weight="600" font-size="7" letter-spacing="3">BESPOKE EDITION</text>
+                    </g>
+                `
+            }
+        ];
+
+        // Application State
+        const state = {
+            currency: 'CAD',
+            usdRate: 0.74,
+            view: 'front',
+            color: COLORS[0],
+            size: 'L',
+            quantity: 1,
+            placement: 'center-chest',
+            scalePercent: 100,
+            designMode: 'gallery', // 'gallery' | 'upload'
+            selectedTemplateId: 'minimal-typo',
+            monogramText: 'ATL',
+            artworkTint: 'auto',
+            uploadedImage: null, // { file, dataUrl, name, width, height, isSvg }
+            printFinish: 'standard',
+            lastReceiptText: '',
+            pendingFallbackPayload: null
+        };
+
+        // ==========================================
+        // INITIALIZATION
+        // ==========================================
+        window.onload = function () {
+            updateSetupBannerStatus();
+            renderColorSwatches();
+            renderSizeButtons();
+            renderTemplateGallery();
+            setupDragAndDrop();
+            updateHoodieVisuals();
+            updatePricing();
+        };
+
+        function isFormSubmitConfigured() {
+            return Boolean(RECEIVER_EMAIL && RECEIVER_EMAIL.trim() !== "" && RECEIVER_EMAIL !== "YOUR_EMAIL_HERE");
+        }
+
+        function updateSetupBannerStatus() {
+            const banner = document.getElementById('formsubmit-setup-banner');
+            if (!banner) return;
+
+            if (isFormSubmitConfigured()) {
+                banner.classList.add('hidden');
+            } else {
+                banner.classList.remove('hidden');
+            }
+        }
+
+        // ==========================================
+        // RENDER UI CONTROLS
+        // ==========================================
+        function renderColorSwatches() {
+            const container = document.getElementById('color-swatches');
+            container.innerHTML = COLORS.map(c => {
+                const active = c.id === state.color.id;
+                return `
+                    <button type="button" onclick="selectColor('${c.id}')" title="${c.name}"
+                        class="group relative w-9 h-9 rounded-full flex items-center justify-center transition transform hover:scale-105 ${active ? 'ring-2 ring-offset-2 ring-blue-600' : 'ring-1 ring-slate-300'}"
+                        style="background-color: ${c.hex};">
+                        ${active ? `<svg class="w-4 h-4 ${c.isDark ? 'text-white' : 'text-slate-900'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>` : ''}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function renderSizeButtons() {
+            const container = document.getElementById('size-buttons');
+            container.innerHTML = SIZES.map(sz => {
+                const active = sz === state.size;
+                return `
+                    <button type="button" onclick="selectSize('${sz}')"
+                        class="py-2 rounded-xl text-xs font-bold border transition ${active
+                            ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                            : 'bg-white text-slate-700 border-slate-200 hover:border-blue-400 hover:text-blue-600'}">
+                        ${sz}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function renderTemplateGallery() {
+            const container = document.getElementById('template-grid');
+            container.innerHTML = TEMPLATES.map(tpl => {
+                const active = state.designMode === 'gallery' && state.selectedTemplateId === tpl.id;
+                return `
+                    <button type="button" onclick="selectTemplate('${tpl.id}')"
+                        class="p-2.5 rounded-xl border text-left transition flex flex-col items-center justify-between gap-2 ${active
+                            ? 'border-blue-600 bg-blue-50/60 ring-1 ring-blue-600'
+                            : 'border-slate-200 bg-white hover:border-blue-300'}">
+                        <svg viewBox="-65 -65 130 130" class="w-16 h-16">
+                            ${tpl.render('#0F172A', state.monogramText)}
+                        </svg>
+                        <div class="w-full text-center">
+                            <p class="text-[11px] font-bold text-slate-900 truncate">${tpl.name}</p>
+                            <p class="text-[10px] text-slate-400">${tpl.tag}</p>
+                        </div>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        // ==========================================
+        // INTERACTIVE CUSTOMIZER ACTIONS
+        // ==========================================
+        function selectColor(colorId) {
+            state.color = COLORS.find(c => c.id === colorId) || COLORS[0];
+            document.getElementById('selected-color-name').textContent = state.color.name;
+            document.getElementById('active-color-badge').textContent = state.color.name;
+            renderColorSwatches();
+            updateHoodieVisuals();
+        }
+
+        function selectSize(sz) {
+            state.size = sz;
+            renderSizeButtons();
+            updatePricing();
+        }
+
+        function updateQuantity(delta) {
+            setQuantity(state.quantity + delta);
+        }
+
+        function setQuantity(val) {
+            let num = parseInt(val, 10);
+            if (isNaN(num) || num < 1) num = 1;
+            if (num > 500) num = 500;
+            state.quantity = num;
+            document.getElementById('qty-input').value = num;
+            updatePricing();
+        }
+
+        function setView(viewMode) {
+            state.view = viewMode;
+            const frontBtn = document.getElementById('btn-view-front');
+            const backBtn = document.getElementById('btn-view-back');
+
+            if (viewMode === 'front') {
+                frontBtn.className = 'px-4 py-1.5 rounded-lg text-xs font-semibold bg-white text-blue-600 shadow-sm transition';
+                backBtn.className = 'px-4 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition';
+                document.getElementById('hoodie-front-details').classList.remove('hidden');
+                document.getElementById('hoodie-back-details').classList.add('hidden');
+                if (state.placement === 'full-back') {
+                    setPlacement('center-chest', true);
+                }
+            } else {
+                backBtn.className = 'px-4 py-1.5 rounded-lg text-xs font-semibold bg-white text-blue-600 shadow-sm transition';
+                frontBtn.className = 'px-4 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition';
+                document.getElementById('hoodie-front-details').classList.add('hidden');
+                document.getElementById('hoodie-back-details').classList.remove('hidden');
+                if (state.placement !== 'full-back') {
+                    setPlacement('full-back', true);
+                }
+            }
+            updateHoodieVisuals();
+        }
+
+        function setPlacement(placementKey, skipViewSwitch = false) {
+            state.placement = placementKey;
+            const cfg = PLACEMENTS[placementKey];
+
+            // Auto-flip hoodie view to match placement
+            if (!skipViewSwitch && state.view !== cfg.view) {
+                setView(cfg.view);
+            }
+
+            // Update placement buttons styling
+            document.querySelectorAll('.placement-btn').forEach(btn => {
+                if (btn.dataset.placement === placementKey) {
+                    btn.className = 'placement-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 text-white transition';
+                } else {
+                    btn.className = 'placement-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition';
+                }
+            });
+
+            document.getElementById('hud-placement').textContent = cfg.label;
+            updateHoodieVisuals();
+            updatePricing();
+        }
+
+        function setScale(percentVal) {
+            state.scalePercent = parseInt(percentVal, 10);
+            document.getElementById('scale-slider').value = state.scalePercent;
+            document.getElementById('hud-scale').textContent = `${state.scalePercent}%`;
+            updateHoodieVisuals();
+        }
+
+        function switchDesignTab(tab) {
+            state.designMode = tab;
+            const tabGal = document.getElementById('tab-gallery');
+            const tabUp = document.getElementById('tab-upload');
+            const panelGal = document.getElementById('panel-gallery');
+            const panelUp = document.getElementById('panel-upload');
+
+            if (tab === 'gallery') {
+                tabGal.className = 'py-2 px-3 rounded-lg text-xs font-bold bg-white text-blue-600 shadow-sm transition';
+                tabUp.className = 'py-2 px-3 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition';
+                panelGal.classList.remove('hidden');
+                panelUp.classList.add('hidden');
+            } else {
+                tabUp.className = 'py-2 px-3 rounded-lg text-xs font-bold bg-white text-blue-600 shadow-sm transition';
+                tabGal.className = 'py-2 px-3 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition';
+                panelUp.classList.remove('hidden');
+                panelGal.classList.add('hidden');
+            }
+            updateHoodieVisuals();
+        }
+
+        function selectTemplate(tplId) {
+            state.designMode = 'gallery';
+            state.selectedTemplateId = tplId;
+            const monoBox = document.getElementById('monogram-customizer');
+            if (tplId === 'monogram') {
+                monoBox.classList.remove('hidden');
+            } else {
+                monoBox.classList.add('hidden');
+            }
+            renderTemplateGallery();
+            updateHoodieVisuals();
+        }
+
+        function updateMonogramText(val) {
+            state.monogramText = val.toUpperCase() || 'ATL';
+            renderTemplateGallery();
+            updateHoodieVisuals();
+        }
+
+        function setArtworkTint(tint) {
+            state.artworkTint = tint;
+            updateHoodieVisuals();
+        }
+
+        // ==========================================
+        // FILE UPLOAD & PRINT QUALITY DIAGNOSTICS
+        // ==========================================
+        function setupDragAndDrop() {
+            const dropZone = document.getElementById('drop-zone');
+            const fileInput = document.getElementById('file-input');
+
+            dropZone.addEventListener('click', () => fileInput.click());
+
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('border-blue-600', 'bg-blue-50/60');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('border-blue-600', 'bg-blue-50/60');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('border-blue-600', 'bg-blue-50/60');
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    handleFileUpload(e.dataTransfer.files[0]);
+                }
+            });
+        }
+
+        function handleFileUpload(file) {
+            if (!file) return;
+            const validTypes = ['image/png', 'image/jpeg', 'image/svg+xml'];
+            if (!validTypes.includes(file.type)) {
+                showToast('Please upload a PNG, JPG, or SVG artwork file.');
+                return;
+            }
+            if (file.size > 9.5 * 1024 * 1024) {
+                showToast('File exceeds 9.5MB limit (FormSubmit allows 10MB total per email).');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.onload = function () {
+                    const isSvg = file.type === 'image/svg+xml';
+                    const w = img.naturalWidth || 1000;
+                    const h = img.naturalHeight || 1000;
+
+                    state.uploadedImage = {
+                        file: file,
+                        dataUrl: e.target.result,
+                        name: file.name,
+                        width: w,
+                        height: h,
+                        isSvg
+                    };
+
+                    // Populate feedback UI
+                    document.getElementById('upload-thumb').src = e.target.result;
+                    document.getElementById('upload-filename').textContent = file.name;
+                    document.getElementById('upload-resolution').textContent = isSvg
+                        ? 'Infinite Vector Resolution (SVG)'
+                        : `${w} × ${h} px`;
+
+                    const badge = document.getElementById('upload-quality-badge');
+                    if (isSvg || (w >= 1000 && h >= 1000)) {
+                        badge.textContent = '300 DPI • Studio Print Ready';
+                        badge.className = 'inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800';
+                    } else if (w >= 500 && h >= 500) {
+                        badge.textContent = '150 DPI • Good for Chest Print';
+                        badge.className = 'inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800';
+                    } else {
+                        badge.textContent = 'Low Resolution • May Pixelate';
+                        badge.className = 'inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800';
+                    }
+
+                    document.getElementById('upload-feedback').classList.remove('hidden');
+                    updateHoodieVisuals();
+                    showToast('Custom artwork loaded onto mockup');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearUploadedFile() {
+            state.uploadedImage = null;
+            document.getElementById('file-input').value = '';
+            document.getElementById('upload-feedback').classList.add('hidden');
+            updateHoodieVisuals();
+        }
+
+        // ==========================================
+        // LIVE SVG MOCKUP RENDERER
+        // ==========================================
+        function updateHoodieVisuals() {
+            // 1. Update Hoodie Fabric Color
+            document.querySelectorAll('.fabric-fill').forEach(el => {
+                el.setAttribute('fill', state.color.hex);
+            });
+            document.querySelectorAll('.cord-stroke').forEach(el => {
+                el.setAttribute('stroke', state.color.cord);
+            });
+
+            // 2. Update Safe-Zone Guide Box
+            const pCfg = PLACEMENTS[state.placement];
+            const guide = document.getElementById('print-zone-guide');
+            guide.setAttribute('x', pCfg.guide.x);
+            guide.setAttribute('y', pCfg.guide.y);
+            guide.setAttribute('width', pCfg.guide.w);
+            guide.setAttribute('height', pCfg.guide.h);
+
+            // 3. Compute Artwork Position & Scale
+            const effectiveScale = pCfg.defaultScale * (state.scalePercent / 100);
+            const transformGroup = document.getElementById('artwork-transform-group');
+            transformGroup.setAttribute('transform', `translate(${pCfg.x}, ${pCfg.y}) scale(${effectiveScale.toFixed(3)})`);
+
+            // 4. Render Active Artwork (Uploaded Image or Vector Template)
+            const target = document.getElementById('artwork-render-target');
+            if (state.designMode === 'upload' && state.uploadedImage) {
+                target.innerHTML = `
+                    <image href="${state.uploadedImage.dataUrl}" x="-55" y="-55" width="110" height="110" preserveAspectRatio="xMidYMid meet"/>
+                `;
+            } else {
+                const tpl = TEMPLATES.find(t => t.id === state.selectedTemplateId) || TEMPLATES[0];
+                let ink = state.artworkTint;
+                if (ink === 'auto') {
+                    ink = state.color.isDark ? '#FFFFFF' : '#0F172A';
+                }
+                target.innerHTML = tpl.render(ink, state.monogramText);
+            }
+        }
+
+        // ==========================================
+        // PRICING & CURRENCY CALCULATOR
+        // ==========================================
+        function setCurrency(curr) {
+            state.currency = curr;
+            const btnCad = document.getElementById('curr-cad');
+            const btnUsd = document.getElementById('curr-usd');
+
+            if (curr === 'CAD') {
+                btnCad.className = 'px-2.5 py-1 rounded-md bg-white text-blue-600 shadow-sm transition';
+                btnUsd.className = 'px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition';
+            } else {
+                btnUsd.className = 'px-2.5 py-1 rounded-md bg-white text-blue-600 shadow-sm transition';
+                btnCad.className = 'px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition';
+            }
+            updatePricing();
+        }
+
+        function formatMoney(amountCAD) {
+            const val = state.currency === 'CAD' ? amountCAD : amountCAD * state.usdRate;
+            return '$' + val.toFixed(2);
+        }
+
+        function updatePricing() {
+            state.printFinish = document.getElementById('print-finish').value;
+
+            // Base price + extended sizing surcharge for 2XL/3XL
+            const sizeSurchargeCAD = (state.size === '2XL' || state.size === '3XL') ? 5 : 0;
+            const baseUnitCAD = 68 + sizeSurchargeCAD;
+            const placementCAD = PLACEMENTS[state.placement].costCAD;
+
+            let finishCAD = 0;
+            let finishLabel = '';
+            if (state.printFinish === 'puff') {
+                finishCAD = 8;
+                finishLabel = '3D Raised Puff Ink';
+            } else if (state.printFinish === 'metallic') {
+                finishCAD = 10;
+                finishLabel = 'Metallic Foil Accent';
+            }
+
+            const unitSubtotalCAD = baseUnitCAD + placementCAD + finishCAD;
+            const rawTotalCAD = unitSubtotalCAD * state.quantity;
+            const discountCAD = state.quantity >= 5 ? rawTotalCAD * 0.10 : 0;
+            const finalTotalCAD = rawTotalCAD - discountCAD;
+
+            // Update DOM Breakdown
+            document.getElementById('price-size-label').textContent = state.size + (sizeSurchargeCAD ? ' +Ext' : '');
+            document.getElementById('price-base').textContent = formatMoney(baseUnitCAD);
+            document.getElementById('price-placement-label').textContent = PLACEMENTS[state.placement].label;
+            document.getElementById('price-placement').textContent = formatMoney(placementCAD);
+
+            const addonRow = document.getElementById('price-addon-row');
+            if (finishCAD > 0) {
+                addonRow.classList.remove('hidden');
+                addonRow.classList.add('flex');
+                document.getElementById('price-addon-label').textContent = finishLabel;
+                document.getElementById('price-addon').textContent = formatMoney(finishCAD);
+            } else {
+                addonRow.classList.add('hidden');
+                addonRow.classList.remove('flex');
+            }
+
+            document.getElementById('price-qty').textContent = `× ${state.quantity}`;
+
+            const discountRow = document.getElementById('bulk-discount-row');
+            if (discountCAD > 0) {
+                discountRow.classList.remove('hidden');
+                discountRow.classList.add('flex');
+                document.getElementById('price-discount').textContent = '-' + formatMoney(discountCAD);
+            } else {
+                discountRow.classList.add('hidden');
+                discountRow.classList.remove('flex');
+            }
+
+            document.getElementById('price-total').textContent = formatMoney(finalTotalCAD);
+            document.getElementById('price-currency-tag').textContent = state.currency;
+
+            return {
+                unitSubtotalCAD,
+                discountCAD,
+                finalTotalCAD
+            };
+        }
+
+        // ==========================================
+        // MODALS, SVG-TO-PNG SNAPSHOT & FORMSPREE SUBMISSION
+        // ==========================================
+        function toggleSizeGuide(show) {
+            const modal = document.getElementById('size-guide-modal');
+            if (show) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function toggleAddressField(isDelivery) {
+            const box = document.getElementById('shipping-address-box');
+            const input = document.getElementById('cust-address');
+            if (isDelivery) {
+                box.classList.remove('hidden');
+                input.required = true;
+            } else {
+                box.classList.add('hidden');
+                input.required = false;
+            }
+        }
+
+        function setSubmitLoading(isLoading, statusLabel = 'Sending Order...') {
+            const btn = document.getElementById('submit-order-btn');
+            const spinner = document.getElementById('submit-spinner');
+            const text = document.getElementById('submit-btn-text');
+            const arrow = document.getElementById('submit-arrow-icon');
+
+            btn.disabled = isLoading;
+            if (isLoading) {
+                spinner.classList.remove('hidden');
+                arrow.classList.add('hidden');
+                text.textContent = statusLabel;
+            } else {
+                spinner.classList.add('hidden');
+                arrow.classList.remove('hidden');
+                text.textContent = 'Submit Order';
+            }
+        }
+
+        /**
+         * Uploads a Blob or File to ImgBB or Cloudinary and returns the direct public URL.
+         * Returns null gracefully if unconfigured or if the upload fails.
+         */
+        async function uploadImageToHost(fileOrBlob, filename) {
+            if (!fileOrBlob) return null;
+
+            // 1. Prefer ImgBB when IMGBB_API_KEY is configured
+            if (isImgbbConfigured()) {
+                const fd = new FormData();
+                fd.append('image', fileOrBlob, filename);
+                const res = await fetch(`https://api.imgbb.com/1/upload?key=${encodeURIComponent(IMGBB_API_KEY)}`, {
+                    method: 'POST',
+                    body: fd
+                });
+                const json = await res.json();
+                if (res.ok && json && json.data && (json.data.url || json.data.display_url)) {
+                    return json.data.url || json.data.display_url;
+                }
+                throw new Error((json && json.error && json.error.message) || 'ImgBB upload failed');
+            }
+
+            // 2. Fallback to Cloudinary Unsigned Upload if configured
+            if (isCloudinaryConfigured()) {
+                const fd = new FormData();
+                fd.append('file', fileOrBlob, filename);
+                fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+                const res = await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(CLOUDINARY_CLOUD_NAME)}/image/upload`, {
+                    method: 'POST',
+                    body: fd
+                });
+                const json = await res.json();
+                if (res.ok && json && json.secure_url) {
+                    return json.secure_url;
+                }
+                throw new Error((json && json.error && json.error.message) || 'Cloudinary upload failed');
+            }
+
+            return null;
+        }
+
+        /**
+         * Renders the live SVG hoodie preview + applied artwork onto an off-screen
+         * HTML5 Canvas and exports a high-resolution PNG Blob for email attachment.
+         */
+        async function generateMockupSnapshotBlob() {
+            return new Promise((resolve) => {
+                try {
+                    const svgEl = document.getElementById('hoodie-svg');
+                    const clonedSvg = svgEl.cloneNode(true);
+                    clonedSvg.setAttribute('width', '600');
+                    clonedSvg.setAttribute('height', '672');
+
+                    // Hide dashed safe-zone guide lines in the exported production proof
+                    const guideEl = clonedSvg.querySelector('#print-zone-guide');
+                    if (guideEl) guideEl.remove();
+
+                    const serializer = new XMLSerializer();
+                    const svgString = serializer.serializeToString(clonedSvg);
+                    const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+                    const url = URL.createObjectURL(svgBlob);
+
+                    const img = new Image();
+                    img.onload = function () {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = 600;
+                        canvas.height = 672;
+                        const ctx = canvas.getContext('2d');
+
+                        // Clean light studio background
+                        ctx.fillStyle = '#F8FAFC';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                        URL.revokeObjectURL(url);
+                        canvas.toBlob((pngBlob) => {
+                            resolve(pngBlob || null);
+                        }, 'image/png');
+                    };
+                    img.onerror = function () {
+                        URL.revokeObjectURL(url);
+                        resolve(null);
+                    };
+                    img.src = url;
+                } catch (err) {
+                    resolve(null);
+                }
+            });
+        }
+
+        async function submitOrder(e) {
+            e.preventDefault();
+
+            const errorBox = document.getElementById('submit-error-box');
+            errorBox.classList.add('hidden');
+
+            const name = document.getElementById('cust-name').value.trim();
+            const email = document.getElementById('cust-email').value.trim();
+            const phone = document.getElementById('cust-phone').value.trim();
+            const fulfillment = document.querySelector('input[name="fulfillment"]:checked').value;
+            const address = document.getElementById('cust-address').value.trim();
+            const placementNotes = document.getElementById('placement-notes').value.trim();
+            const specialNotes = document.getElementById('cust-notes').value.trim();
+
+            if (!name || !email) {
+                showToast('Please enter your name and email address.');
+                return;
+            }
+
+            if (state.designMode === 'upload' && !state.uploadedImage) {
+                showToast('Please upload your artwork file or choose a Studio Template.');
+                return;
+            }
+
+            const now = new Date();
+            const year = now.getFullYear();
+            const orderId = `ORD-${year}-${Math.floor(1000 + Math.random() * 9000)}`;
+            const orderTimestamp = now.toLocaleString('en-CA', {
+                dateStyle: 'medium',
+                timeStyle: 'short'
+            });
+
+            const { unitSubtotalCAD, discountCAD, finalTotalCAD } = updatePricing();
+            const rawSubtotalCAD = unitSubtotalCAD * state.quantity;
+
+            const formattedUnitPrice = `${formatMoney(unitSubtotalCAD)} ${state.currency}`;
+            const formattedSubtotal = `${formatMoney(rawSubtotalCAD)} ${state.currency}`;
+            const formattedDiscount = discountCAD > 0 ? `-${formatMoney(discountCAD)} ${state.currency} (10% Bulk)` : 'None';
+            const formattedTotal = `${formatMoney(finalTotalCAD)} ${state.currency}`;
+
+            const templateObj = TEMPLATES.find(t => t.id === state.selectedTemplateId) || TEMPLATES[0];
+            const hasCustomUpload = state.designMode === 'upload' && state.uploadedImage && state.uploadedImage.file;
+
+            const designSource = hasCustomUpload
+                ? `Uploaded File: ${state.uploadedImage.name} (${state.uploadedImage.isSvg ? 'SVG Vector' : `${state.uploadedImage.width}x${state.uploadedImage.height}px`})`
+                : `Studio Template: ${templateObj.name}`;
+
+            const customStyleDetails = hasCustomUpload
+                ? 'Custom Uploaded Artwork (Attached)'
+                : `${state.selectedTemplateId === 'monogram' ? `Monogram Text: "${state.monogramText}" | ` : ''}Ink Tint: ${state.artworkTint}`;
+
+            const finishSelect = document.getElementById('print-finish');
+            const finishText = finishSelect.options[finishSelect.selectedIndex].text.split(' (')[0];
+            const combinedNotes = [placementNotes, specialNotes].filter(Boolean).join(' | ');
+            const resolvedAddress = fulfillment.includes('Pickup') ? 'Toronto Studio Pickup (482 Queen St W)' : address;
+
+            // Generate PNG mockup snapshot & validate FormSubmit 10 MB total attachment size
+            setSubmitLoading(true, 'Preparing Proof & Attachments...');
+            const mockupBlob = await generateMockupSnapshotBlob();
+
+            const mockupBytes = mockupBlob ? mockupBlob.size : 0;
+            const artworkBytes = hasCustomUpload ? state.uploadedImage.file.size : 0;
+            const totalAttachmentBytes = mockupBytes + artworkBytes;
+
+            if (totalAttachmentBytes > MAX_TOTAL_ATTACHMENT_BYTES) {
+                setSubmitLoading(false);
+                const totalMB = (totalAttachmentBytes / (1024 * 1024)).toFixed(2);
+                showToast(`Attachments total ${totalMB}MB (exceeds FormSubmit's 10MB email limit).`);
+                document.getElementById('submit-error-title').textContent = 'Attachment Size Exceeds 10 MB Limit';
+                document.getElementById('submit-error-msg').textContent = `Your uploaded artwork plus mockup proof equals ${totalMB} MB, which exceeds FormSubmit's 10 MB email attachment cap. Please compress or resize your artwork under 9 MB and try again.`;
+                errorBox.classList.remove('hidden');
+                return;
+            }
+
+            // Build multipart FormData for FormSubmit direct email & file attachment delivery
+            const formData = new FormData();
+            formData.append('_subject', `New Custom Hoodie Order ${orderId} - ${name}`);
+            formData.append('_replyto', email);
+            formData.append('_template', 'table');
+            formData.append('_captcha', 'false');
+
+            formData.append('Order ID', orderId);
+            formData.append('Order Timestamp', orderTimestamp);
+            formData.append('Customer Name', name);
+            formData.append('Customer Email', email);
+            formData.append('Customer Phone', phone || 'Not provided');
+            formData.append('Fulfillment Method', fulfillment);
+            formData.append('Shipping / Pickup Location', resolvedAddress);
+            formData.append('Hoodie Color', state.color.name);
+            formData.append('Garment Size', state.size);
+            formData.append('Quantity', String(state.quantity));
+            formData.append('Print Side', state.view.toUpperCase());
+            formData.append('Placement Zone', PLACEMENTS[state.placement].label);
+            formData.append('Design Scale', `${state.scalePercent}%`);
+            formData.append('Design Source', designSource);
+            formData.append('Custom Monogram / Ink Details', customStyleDetails);
+            formData.append('Print Finish', finishText);
+            formData.append('Unit Price', formattedUnitPrice);
+            formData.append('Subtotal', formattedSubtotal);
+            formData.append('Discount', formattedDiscount);
+            formData.append('Estimated Total', formattedTotal);
+            formData.append('Production Notes', combinedNotes || 'None');
+
+            // Attach files using distinct field names so FormSubmit attaches both to the email
+            if (mockupBlob) {
+                formData.append('mockup_attachment', mockupBlob, `${orderId}_mockup_preview.png`);
+            }
+            if (hasCustomUpload) {
+                formData.append('artwork_attachment', state.uploadedImage.file, state.uploadedImage.name);
+            }
+
+            const orderSummaryData = {
+                orderId,
+                orderTimestamp,
+                name,
+                email,
+                phone,
+                fulfillment,
+                resolvedAddress,
+                designSource,
+                customStyleDetails,
+                finishText,
+                combinedNotes,
+                formattedTotal,
+                hasMockupAttached: Boolean(mockupBlob),
+                hasArtworkAttached: Boolean(hasCustomUpload),
+                uploadedFileName: hasCustomUpload ? state.uploadedImage.name : null
+            // Send directly to FormSubmit AJAX endpoint using multipart FormData
+            // (Do not set manual Content-Type or JSON Accept headers so FormData multipart boundary & files are parsed cleanly)
+            setSubmitLoading(true, 'Sending Order & Files...');
+            try {
+                const response = await fetch(FORMSUBMIT_ENDPOINT, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const rawText = await response.text().catch(() => '');
+                let result = {};
+                try {
+                    result = rawText ? JSON.parse(rawText) : {};
+                } catch (_) {
+                    result = {};
+                }
+
+                const isSuccess = response.ok && (
+                    result.success === 'true' ||
+                    result.success === true ||
+                    /success|sent|confirm/i.test(result.message || rawText)
+                );
+
+                if (isSuccess) {
+                    setSubmitLoading(false);
+                    openConfirmationModal(orderSummaryData, false);
+                    showToast('Order & file attachments emailed directly!');
+                } else {
+                    const reason = result.message
+                        || rawText
+                        || 'FormSubmit could not deliver the email. Ensure the page is served over HTTP/HTTPS (not file://) and check your inbox/spam for FormSubmit\'s activation email.';
+                    throw new Error(reason);
+                }
+            } catch (error) {
+                setSubmitLoading(false);
+                state.pendingFallbackPayload = orderSummaryData;
+                document.getElementById('submit-error-title').textContent = 'Email Delivery Issue';
+                document.getElementById('submit-error-msg').textContent = error.message || 'Network or FormSubmit activation issue. You can open the backup ticket below to copy or download your receipt.';
+                errorBox.classList.remove('hidden');
+                showToast('Could not send email — backup ticket ready');
+            }
+        }
+
+        function openFallbackReceiptModal() {
+            if (state.pendingFallbackPayload) {
+                openConfirmationModal(state.pendingFallbackPayload, false, true);
+            }
+        }
+
+        function openConfirmationModal(data, isDemo = false, isOfflineFallback = false) {
+            const {
+                orderId, orderTimestamp, name, email, phone, fulfillment,
+                resolvedAddress, designSource, customStyleDetails, finishText,
+                combinedNotes, formattedTotal, hasMockupAttached,
+                hasArtworkAttached, uploadedFileName
+            } = data;
+
+            // Update Modal Header & Demo Banner
+            const heading = document.getElementById('ticket-modal-heading');
+            const subheading = document.getElementById('ticket-modal-subheading');
+            const demoNotice = document.getElementById('ticket-demo-notice');
+
+            if (isOfflineFallback) {
+                heading.textContent = 'Offline Backup Ticket Ready';
+                subheading.textContent = 'Copy or download this ticket and send it directly to the studio.';
+                demoNotice.classList.add('hidden');
+            } else if (isDemo) {
+                heading.textContent = 'Order Ticket Generated (Demo)';
+                subheading.textContent = 'Set RECEIVER_EMAIL to enable direct FormSubmit emails with file attachments.';
+                demoNotice.classList.remove('hidden');
+            } else {
+                heading.textContent = 'Order Sent to Studio!';
+                subheading.textContent = 'Your hoodie specs and image attachments have been emailed directly.';
+                demoNotice.classList.add('hidden');
+            }
+
+            // Populate Ticket Modal Fields
+            document.getElementById('ticket-order-id').textContent = `#${orderId}`;
+            document.getElementById('ticket-color').textContent = state.color.name;
+            document.getElementById('ticket-size').textContent = `Size: ${state.size}`;
+            document.getElementById('ticket-qty').textContent = `Qty: ${state.quantity}`;
+            document.getElementById('ticket-artwork-name').textContent = designSource;
+            document.getElementById('ticket-placement').textContent = `${PLACEMENTS[state.placement].label} (${state.scalePercent}% Scale) • ${finishText}`;
+            document.getElementById('ticket-notes').textContent = combinedNotes ? `Notes: "${combinedNotes}"` : 'No special production notes.';
+
+            // Update direct attachment confirmation badge
+            const attachmentBadge = document.getElementById('ticket-attachment-badge');
+            const attachmentText = document.getElementById('ticket-attachment-text');
+            if (isOfflineFallback) {
+                attachmentBadge.classList.add('hidden');
+            } else {
+                attachmentBadge.classList.remove('hidden');
+                if (hasArtworkAttached && uploadedFileName) {
+                    attachmentText.textContent = `Attached to email: mockup_preview.png + ${uploadedFileName}`;
+                } else if (hasMockupAttached) {
+                    attachmentText.textContent = 'Attached to email: mockup_preview.png proof';
+                } else {
+                    attachmentText.textContent = 'Order specifications formatted for email';
+                }
+            }
+
+            document.getElementById('ticket-customer').textContent = name;
+            document.getElementById('ticket-email').textContent = email;
+            document.getElementById('ticket-phone').textContent = phone ? `Tel: ${phone}` : '';
+            document.getElementById('ticket-fulfillment').textContent = fulfillment;
+            document.getElementById('ticket-address').textContent = resolvedAddress;
+            document.getElementById('ticket-total').textContent = formattedTotal;
+
+            // Clone live SVG into ticket thumbnail
+            const svgClone = document.getElementById('hoodie-svg').cloneNode(true);
+            svgClone.removeAttribute('id');
+            svgClone.setAttribute('class', 'w-full h-full object-contain');
+            const thumbContainer = document.getElementById('ticket-mockup-preview');
+            thumbContainer.innerHTML = '';
+            thumbContainer.appendChild(svgClone);
+
+            // Store plain text receipt for Copy/Download
+            const attachmentSummary = hasArtworkAttached && uploadedFileName
+                ? `mockup_preview.png, ${uploadedFileName} (Attached directly to email)`
+                : (hasMockupAttached ? 'mockup_preview.png (Attached directly to email)' : 'None');
+
+            const receiptLines = [
+                `==========================================`,
+                `ATELIER LAB — CUSTOM HOODIE ORDER TICKET`,
+                `==========================================`,
+                `Order ID:      #${orderId}`,
+                `Submitted:     ${orderTimestamp || new Date().toLocaleDateString()}`,
+                `Client:        ${name} (${email})`,
+                `Phone:         ${phone || 'Not provided'}`,
+                `Fulfillment:   ${fulfillment} — ${resolvedAddress}`,
+                `------------------------------------------`,
+                `Garment:       460GSM Heavyweight Hoodie`,
+                `Colorway:      ${state.color.name}`,
+                `Size & Qty:    ${state.size} × ${state.quantity}`,
+                `Print Side:    ${state.view.toUpperCase()}`,
+                `Artwork:       ${designSource}`,
+                `Style/Ink:     ${customStyleDetails}`,
+                `Placement:     ${PLACEMENTS[state.placement].label} (${state.scalePercent}% Scale)`,
+                `Print Finish:  ${finishText}`,
+                `Notes:         ${combinedNotes || 'None'}`,
+                `Attachments:   ${attachmentSummary}`,
+                `------------------------------------------`,
+                `TOTAL:         ${formattedTotal}`,
+                `==========================================`
+            ];
+
+            state.lastReceiptText = receiptLines.join('\n');
+
+            const modal = document.getElementById('confirmation-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function copyOrderSummary() {
+            if (!state.lastReceiptText) return;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = state.lastReceiptText;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+            showToast('Order ticket copied to clipboard');
+        }
+
+        function downloadOrderReceipt() {
+            if (!state.lastReceiptText) return;
+            const blob = new Blob([state.lastReceiptText], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const idMatch = state.lastReceiptText.match(/#(ORD-[\w-]+)/);
+            const filename = idMatch ? `${idMatch[1]}.txt` : 'hoodie-order-ticket.txt';
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast(`Downloaded ${filename}`);
+        }
+
+        function resetForNewOrder() {
+            document.getElementById('confirmation-modal').classList.add('hidden');
+            document.getElementById('confirmation-modal').classList.remove('flex');
+            document.getElementById('submit-error-box').classList.add('hidden');
+            document.getElementById('order-form').reset();
+            toggleAddressField(true);
+            setQuantity(1);
+            setScale(100);
+            setPlacement('center-chest');
+            selectColor('white');
+            selectSize('L');
+            clearUploadedFile();
+            switchDesignTab('gallery');
+            selectTemplate('minimal-typo');
+            showToast('Ready for a new custom hoodie order');
+        }
+
+        // ==========================================
+        // TOAST & SANITIZATION UTILITIES
+        // ==========================================
+        let toastTimeout = null;
+        function showToast(message) {
+            const banner = document.getElementById('toast-banner');
+            const msgEl = document.getElementById('toast-message');
+            msgEl.textContent = message;
+
+            banner.classList.remove('translate-y-24', 'opacity-0');
+            banner.classList.add('translate-y-0', 'opacity-100');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                banner.classList.remove('translate-y-0', 'opacity-100');
+                banner.classList.add('translate-y-24', 'opacity-0');
+            }, 3000);
+        }
+
+        function escapeXml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&apos;');
+        }
+    </script>
+</body>
+</html>
